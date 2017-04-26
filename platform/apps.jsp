@@ -25,6 +25,12 @@
 	User a = (User)session.getAttribute("currentSessionUser");
 	String username = a.getUsername();
 %>
+<%@ page import="cloud.clouddb.cloud_app.*, java.util.*" %>
+<% 
+	session = request.getSession(); 
+	Collection<App> allApps = (ArrayList<App>)session.getAttribute("allApps");
+	
+%>
 
 </head>
 <body style="background: #262c54;"> 
@@ -111,90 +117,20 @@
 <div class="new-apps-grid" style="background: #e8e8e8;">
 	<div class="container">
 		<h3>Apps Center</h3>
-		<div class="col-md-3 new-grid-w3l view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-w3l view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-w3l view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-w3l view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
+		<%
+			Iterator<App> it=allApps.iterator();
+			while(it.hasNext()){
+				App curApp = it.next();
+				out.println("<div class='col-md-3 new-grid-w3l view view-eighth'>");
+				out.println("<img src='images/ng4.jpg' alt=' ' />");
+				out.println("<div class='mask'>");
+				out.println("<a href='single.html'><h4>Click here</h4></a>");
+				out.println("<p>"+curApp.getApp_name()+"</p>");
+				out.println("<p>use times: "+curApp.getUse_times()+"</p>");
+				out.println("<p>use times: "+curApp.getPrice()+"</p>");
+				out.println("</div></div>");
+			}
+		%>
 		<div class="clearfix"></div>
 		
 	</div>
