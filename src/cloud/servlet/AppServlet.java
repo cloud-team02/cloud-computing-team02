@@ -42,13 +42,13 @@ public class AppServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		AppDAO appDAO = new AppDAO(); 
 		
-		Collection<App> allApps =appDAO.getAllApps();//=new ArrayList<App>();
+		Collection<App> allApps =appDAO.getAllApps();
 		
 		HttpSession session=request.getSession(true);
 		session.setAttribute("allApps", allApps);
 		
 		
-		String url = "../../../CloudServer/platform/apps.jsp";//?Username="+ URLEncoder.encode(request.getParameter("Username"),"UTF-8");
+		String url = "../../../CloudServer/platform/apps.jsp";
 		
 		
 		response.sendRedirect(url);
@@ -63,22 +63,7 @@ public class AppServlet extends HttpServlet {
 		AppDAO appDAO = new AppDAO(); 
 	
 		Collection<App> allApps =appDAO.getAllApps();//=new ArrayList<App>();
-		
-		//allApps =appDAO.getAllApps();
-		//Iterator<App> it=app_collection.iterator();
-		/*
-		for(int i=0;i<app_collection.size();i++)
-		{
-			App app=new App();
-			app=it.next();
-			System.out.println(app.getApp_name());
-			System.out.println(app.getUrl());
-			//System.out.println(it.next().getApp_name());
-			HttpSession session = request.getSession(true); 
-			session.setAttribute("apps",app.getUrl()); 
-			session.setAttribute("appname", app.getApp_name());
-		}
-		*/
+
 		HttpSession session=request.getSession(true);
 		session.setAttribute("allApps", allApps);
 		
