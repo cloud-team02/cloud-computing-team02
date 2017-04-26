@@ -34,7 +34,7 @@ public class AppDAO {
 	
 	private void searchApps(){
 		Connection connection = this.connect.getConnection();
-		String sql_query = "Select * from Apps";
+		String sql_query = "Select * from Apps order by use_times DESC";
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql_query);
 			ResultSet results = statement.executeQuery();
@@ -44,6 +44,8 @@ public class AppDAO {
 				new_app.setApp_id(results.getInt("id"));
 				new_app.setApp_name(results.getString("app_name"));
 				new_app.setDeveloper_id(results.getInt("developer_id"));
+				new_app.setUse_times(results.getInt("use_times"));
+				new_app.setPrice(results.getInt("price"));
 				new_app.setUrl(results.getString("url"));
 				this.app_collection.add(new_app);
 				//results.next();
@@ -57,12 +59,13 @@ public class AppDAO {
 	
 	public void addApp(App app){
 		Connection connection = this.connect.getConnection();
-		String sql_query = "Insert into Apps (app_name, developer_id, url) values (?,?,?)";
+		String sql_query = "Insert into Apps (app_name, developer_id, url, price, use_times) values (?,?,?,?,0)";
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql_query);
 			statement.setString(1, app.getApp_name());
 			statement.setInt(2, app.getDeveloper_id());
 			statement.setString(3, app.getUrl());
+			statement.setDouble(4, app.getPrice());
 			statement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -111,3 +114,4 @@ public class AppDAO {
 //		}
 	}
 }
+
