@@ -5,6 +5,8 @@ import cloud.clouddb.ConnectionDAO;
 import java.sql.*;
 import java.util.*;
 
+import org.omg.CORBA.Request;
+
 public class AppDAO {
 	// false-> no same name, true-> have same name
 	public boolean isExistedName(String app_name){
@@ -45,6 +47,10 @@ public class AppDAO {
 				new_app.setApp_name(results.getString("app_name"));
 				new_app.setDeveloper_id(results.getInt("developer_id"));
 				new_app.setUrl(results.getString("url"));
+				new_app.setPrice(results.getDouble("price"));
+				new_app.setUse_times(results.getInt("use_times"));
+				new_app.setDescription(results.getString("description"));
+				new_app.setIconUrl(results.getString("iconeUrl"));
 				this.app_collection.add(new_app);
 				//results.next();
 				}
@@ -57,12 +63,16 @@ public class AppDAO {
 	
 	public void addApp(App app){
 		Connection connection = this.connect.getConnection();
-		String sql_query = "Insert into Apps (app_name, developer_id, url) values (?,?,?)";
+		String sql_query = "Insert into Apps (app_name, developer_id, url,price,use_times,description,iconUrl) values (?,?,?,?,?,?,?)";
 		try {
 			PreparedStatement statement = connection.prepareStatement(sql_query);
 			statement.setString(1, app.getApp_name());
 			statement.setInt(2, app.getDeveloper_id());
 			statement.setString(3, app.getUrl());
+			statement.setDouble(4, app.getPrice());
+			statement.setInt(5, app.getUse_times());
+			statement.setString(6, app.getDescription());
+			statement.setString(7, app.getIconUrl());
 			statement.execute();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -87,27 +97,6 @@ public class AppDAO {
 	
 	private ConnectionDAO connect = new ConnectionDAO();
 	private Collection<App> app_collection = new ArrayList<App>();
-	
-	
-	
-	public static void main(String [ ] args){
-//		AppDAO aa = new AppDAO();
-//		Collection<App> Aps = new ArrayList<App>();
-//		
-//		//App aaaa = new App();
-//		//aaaa.setApp_name("test");
-//		//aaaa.setDeveloper_id(1);
-//		//aaaa.setUrl("/not exist");
-//		//aa.addApp(aaaa);
-//		aa.deleteApp(2);
-//		Aps = aa.getAllApps();
-//		Iterator<App> i = Aps.iterator();
-//		while (i.hasNext()){
-//			App a = new App();
-//			a = i.next();
-//			System.out.println(a.getApp_id());
-//			System.out.println(a.getApp_name());
-//			System.out.println(a.getUrl());
-//		}
-	}
+		
 }
+
