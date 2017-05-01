@@ -4,9 +4,9 @@ public class App{
 	private String App_name;
 	private int App_id;
 	private int Developer_id;
-	private int use_times;
+	private String url;
 	private double price;
-	private String Url;
+	private int use_times;
 	
 	public String getApp_name() {
 		return App_name;
@@ -26,17 +26,11 @@ public class App{
 	public void setDeveloper_id(int developer_id) {
 		this.Developer_id = developer_id;
 	}
-	public int getUse_times() {
-		return use_times;
-	}
-	public void setUse_times(int use_times) {
-		this.use_times = use_times;
-	}
 	public String getUrl() {
-		return Url;
+		return url;
 	}
 	public void setUrl(String url) {
-		this.Url = url;
+		this.url = url;
 	}
 	public double getPrice() {
 		return price;
@@ -44,8 +38,12 @@ public class App{
 	public void setPrice(double price) {
 		this.price = price;
 	}
-
-	
+	public int getUse_times() {
+		return use_times;
+	}
+	public void setUse_times(int use_times) {
+		this.use_times = use_times;
+	}
 	@Override
 	public String toString()
 	{
