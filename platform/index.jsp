@@ -21,30 +21,20 @@
 <script src="js/bootstrap.js"></script>
 
 <%@ page import="cloud.clouddb.cloud_user.*" %>
-<% 
-	session = request.getSession(); 
-	User a = (User)session.getAttribute("currentSessionUser");
-	String username = a.getUsername();
-%>
 <%@ page import="cloud.clouddb.cloud_app.*, java.util.*" %>
 <% 
-	session = request.getSession(); 
-	Collection<App> allApps = (ArrayList<App>)session.getAttribute("allApps");
-	
-	/* ArrayList<String> appnames = new ArrayList<String>();
-	ArrayList<String> appurls = new ArrayList<String>();
-	
-	for(int i=0;i<apps_col.size();i++)
-	{
-		if(it.hasNext())
-		{
-			appnames.add(i, it.next().getApp_name());
-			appurls.add(i, it.next().getApp_name());
-		}
-	} */
-	
+boolean login = false;
+User u = new User();
+String username = "Login";
+session = request.getSession();
+if (session.getAttribute("currentSessionUser")!=null){
+	u = (User)session.getAttribute("currentSessionUser");
+	login = true;
+	username = u.getUsername();
+}
+AppDAO dao = new AppDAO();
+Collection<App> allApps  = dao.getAllApps();
 %>
-
 
 
 </head>
@@ -119,14 +109,16 @@
 						</li>
 						<li class="hover-effect"><a href="apps.jsp">Apps Center</a></li>
 						<li class="hover-effect"><a href="about.jsp">About</a></li>
-						<li class="hover-effect"><a href="userpage.html"><%=username %></a></li>
+						<li class="hover-effect"><%if (login==true){
+							out.print("<a href='userpage.html'>"+username+"</a>");
+							}else{
+								out.print("<a href='login.html'>"+username+"</a>");}%></li>
+							
 					</ul>
 				</div>
-
 			</div>
 		</nav>
 		<!-- //Navbar -->
-
 		<!-- Slider -->
 		<div class="slider">
 			<ul class="rslides" id="slider">
@@ -155,10 +147,10 @@
 				pager: true,
 			});
 		});
+		
 	</script>
 	<!-- Banner-Slider-JavaScript -->
 	<!-- Header -->
-
 <!-- trend -->
 <div class="trend-apps">
 	<div class="container">
@@ -191,14 +183,13 @@
 	</div>
 </div>
 <!-- trend -->
-
 <!-- new apps -->
 <div class="new-apps-grid">
 	<div class="container">
 		<div>
 		<h3>New Appslications</h3>
 		<div style="clear: both;"></div>
-		<button style="float: right; z-index: 999; font-size: 14px; width: 150px; height: 40px; margin-right: 10px; border:2px solid #E91E63; background: #E91E63; border-radius: 5px; color: #FFF;">Add Your apps</button>
+		<button class="new-apps-button" onclick="javascript:window.location.href='upload.html'">Add Your apps</button>
 		</div>
 		<div style="clear: both;"></div>
 		
@@ -207,73 +198,19 @@
 			while(it.hasNext()){
 				App curApp = it.next();
 				out.println("<div class='col-md-3 new-grid-w3l view view-eighth'>");
-				out.println("<img src='images/ng4.jpg' alt=' ' />");
+				out.println("<img src='"+curApp.getIconUrl()+"' alt=' ' />");
 				out.println("<div class='mask'>");
-				out.println("<a href='single.html'><h4>Click here</h4></a>");
+				
+					out.println("<a href='"+curApp.getUrl()+"'><h4>Click here</h4></a>");
+				
 				out.println("<p>"+curApp.getApp_name()+"</p>");
+				out.println("<p>"+curApp.getIconUrl()+"</p>");
 				out.println("<p>use times: "+curApp.getUse_times()+"</p>");
 				out.println("<p>use times: "+curApp.getPrice()+"</p>");
 				out.println("</div></div>");
 			}
 		%>
-		
-		<!-- <div class="col-md-3 new-grid-w3l view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-w3l view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-w3l view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-w3l view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div>
-		<div class="col-md-3 new-grid-agile view view-eighth">
-			<img src="images/ng4.jpg" alt=" " />
-			<div class="mask">
-				<a href="single.html"><h4>Click here</h4></a>
-				<p>Please start to experience it</p>
-			</div>
-		</div> -->
-		
+			
 		
 		<div class="clearfix"></div>
 		<a href="#" class="more-click">More >></a>
