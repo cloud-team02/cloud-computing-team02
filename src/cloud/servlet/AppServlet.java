@@ -1,6 +1,7 @@
 package cloud.servlet;
 
 import cloud.clouddb.cloud_app.*;
+import cloud.clouddb.cloud_user.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -40,40 +41,27 @@ public class AppServlet extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		AppDAO appDAO = new AppDAO(); 
 		
-		Collection<App> allApps =appDAO.getAllApps();
-		
-		HttpSession session=request.getSession(true);
-		session.setAttribute("allApps", allApps);
-		
-		
-		String url = "../../../CloudServer/platform/apps.jsp";
-		
-		
-		response.sendRedirect(url);
-
 	}
 
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		AppDAO appDAO = new AppDAO(); 
-	
-		Collection<App> allApps =appDAO.getAllApps();//=new ArrayList<App>();
 
+		AppDAO appDAO = new AppDAO(); 
+		
+		Collection<App> allApps =appDAO.getAllApps();
+		//App curApp = (App)allApps.toArray()[0];
+		
 		HttpSession session=request.getSession(true);
 		session.setAttribute("allApps", allApps);
 		
-		
-		String url = "../../../CloudServer/platform/index.jsp?Username="+ URLEncoder.encode(request.getParameter("Username"),"UTF-8");
-		
-		
-		response.sendRedirect(url);
-		
+		String trueJson = "{\"status\":\"true\"}";
+		response.setContentType("text/plain");
+		response.getWriter().write(trueJson);
+
 		
 	}
-
 }
+

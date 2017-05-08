@@ -2,6 +2,7 @@ package cloud.servlet;
 
 import java.io.*;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,7 +26,7 @@ import cloud.clouddb.cloud_user.*;
 @MultipartConfig(fileSizeThreshold=1024*1024*2, maxFileSize=1024*1024*10, maxRequestSize=1024*1024*50)
 public class UploadServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private static final String SAVE_DIR = "uploadedFiles";
+	//private static final String SAVE_DIR = "uploadedFiles";
        
     /**
      * @see HttpServlet#HttpServlet()
@@ -48,44 +49,73 @@ public class UploadServlet extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		// get app parameters from request
+		HttpSession session = request.getSession();
 		AppDAO appDAO = new AppDAO();
 	    App newApp = new App();
-	    newApp.setApp_name(request.getParameter("AppsName"));
-	    newApp.setPrice(Integer.parseInt(request.getParameter("price")));
-	    newApp.setDescription(request.getParameter("description"));
-	    newApp.setUse_times(0);
-	    HttpSession session = request.getSession();
-	    User developer = (User)session.getAttribute("currentSessionUser");
-	    //newApp.setDeveloper_id(developer.getId());
-		//String appPath = request.getServletContext().getRealPath("");
-	    // Create path to the directory to save uploaded file
-		String savePath = "/home/sz144/tomcat/webapps/"+request.getParameter("AppsName"); //appPath + File.separator + SAVE_DIR;    
-	    // Create the save directory if it does not exist
-		File fileSaveDir = new File(savePath);
-		if (!fileSaveDir.exists())
-			fileSaveDir.mkdir();
-		newApp.setUrl(savePath);
-		Part appPart = request.getPart("app_file");
-		Part iconPart = request.getPart("icon_file");
-		String fileName = extractFileName(appPart);
-		String iconName = extractFileName(iconPart);
-		String appPath = savePath + File.separator + fileName;
-		String iconPath = savePath + File.separator + iconName;
-		newApp.setIconUrl(iconPath);
-		appDAO.addApp(newApp);
-		appPart.write(appPath);
-		jarExtractor(appPath,savePath);
-		appPart.write(iconPath);
-		/*
-		for (Part part : request.getParts()){
-			String fileName = extractFileName(part);
-			System.out.println(fileName);
-			part.write(savePath + File.separator + fileName);
-		}
-		*/
-		
-		//response.getWriter().append(savePath);
+	    String app_name = request.getParameter("AppsName");
+	    String firstImportApp = request.getParameter("firstImportApp");
+	    String secondImportApp = request.getParameter("secondImportApp");
+	    String thirdImportApp = request.getParameter("thirdImportApp");
+	    if (appDAO.isExistedName(app_name)||app_name.equals("null")){
+	    	session.setAttribute("existAppName",app_name);
+	    	response.sendRedirect("upload.jsp");
+	    }else if(firstImportApp.equals("")==false && appDAO.isExistedName(firstImportApp)==false){
+	    	session.setAttribute("noFirstApp",firstImportApp);
+	    	response.sendRedirect("upload.jsp");
+	    }else if(secondImportApp.equals("")==false && appDAO.isExistedName(secondImportApp)==false){
+	    	session.setAttribute("noSecondApp",secondImportApp);
+	    	response.sendRedirect("upload.jsp");
+	    }else if(thirdImportApp.equals("")==false && appDAO.isExistedName(thirdImportApp)==false){
+	    	session.setAttribute("noSecondApp",thirdImportApp);
+	    	response.sendRedirect("upload.jsp");
+	    }else{
+		    newApp.setApp_name(app_name);
+		    newApp.setPrice(Integer.parseInt(request.getParameter("price")));
+		    newApp.setDescription(request.getParameter("description"));
+		    newApp.setUse_times(0);
+		    newApp.setFirstImportApp(firstImportApp);
+		    newApp.setSecondImportApp(secondImportApp);
+		    newApp.setThirdImportApp(secondImportApp);
+		    //get user object from session
+		    User developer = (User)session.getAttribute("currentSessionUser");
+		    newApp.setDeveloper_id(developer.getId());
+			//String appPath = request.getServletContext().getContextPath();	
+		    // Create path to the directory to save uploaded file
+			// ********************************************************************************************************************
+			//String savePath = "appPath"+File.separator+request.getParameter("AppsName");  
+			String appPath = request.getServletContext().getRealPath("");
+			String savePath = "/var/lib/tomcat8/webapps"+File.separator+app_name; 
+			String iconsPath = appPath + File.separator+"icons";
+			String appIconPath = iconsPath +File.separator+app_name;
+			File iconsDir = new File(iconsPath);
+			File fileSaveDir = new File(savePath);
+			File appIconDir = new File(appIconPath);
+			// Create the save directory for application if it does not exist
+			if (!fileSaveDir.exists())
+				fileSaveDir.mkdir();
+			// Create the save directory for icon images if it does not exist
+			if(!iconsDir.exists()) iconsDir.mkdir();
+			if(!appIconDir.exists()) appIconDir.mkdir();
+			// get icon image and store into the server
+			Part iconPart = request.getPart("icon_file");
+			String iconName = extractFileName(iconPart);
+			String iconUrl = appIconPath + File.separator + iconName;
+			iconPart.write(iconUrl);
+			
+			// get app file, store it to the server and extract
+			Part appPart = request.getPart("app_file");
+			String fileName = extractFileName(appPart);
+			String appUrl = savePath + File.separator + fileName;
+			appPart.write(appUrl);
+			jarExtractor(appUrl,savePath);
 
+			newApp.setUrl("../"+app_name+File.separator);
+			newApp.setIconUrl("icons"+File.separator+app_name+File.separator+iconName);
+			appDAO.addApp(newApp);
+			
+			response.sendRedirect("index.jsp");
+	    }
 	}
 	private String extractFileName(Part part) {
 	    String contentDisp = part.getHeader("content-disposition");
@@ -97,10 +127,6 @@ public class UploadServlet extends HttpServlet {
 	    }
 	    return "";
 	  }
-	
-
-		//private statiString jarpath = "/home/sz144/tomcat/webapps/Due.jar";
-		//private static String destdir = "/home/sz144/tomcat/webapps/Due/";
 
 
 	  	// Main method extracts a jarfile to a set of
@@ -130,7 +156,7 @@ public class UploadServlet extends HttpServlet {
 		  	    }  // end if
 		  	  }  // end for
 		  	  jarfile.close();
-		  	}  // end main // end class
+		  	}  //  end class
 
 
 }
